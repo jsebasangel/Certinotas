@@ -8,5 +8,7 @@ router.get('/base-materias/codigo/:cod_materia', baseMateriaController.getBaseMa
 router.post('/', baseMateriaController.createBaseMateria);
 router.put('/:id', baseMateriaController.updateBaseMateria);
 router.delete('/:id', baseMateriaController.deleteBaseMateria);
+router.get('/NombreMaterias/Materia', baseMateriaController.getDistinctMaterias);
+
 
 module.exports = router;

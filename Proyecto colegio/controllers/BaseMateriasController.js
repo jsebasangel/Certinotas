@@ -1,7 +1,26 @@
 const BaseMateria = require('../models/BaseMaterias');
 const { QueryTypes } = require('sequelize');
-const sequelize = require('../config/database'); // Importa la instancia de sequelize
+const sequelize = require("../config/database"); // importa tu instancia de Sequelize
 
+
+
+// Obtener nombres distintos de materias por año (opcional)
+exports.getDistinctMaterias = async (req, res) => {
+    try {
+        const { year } = req.query; // Ej: /api/materias?year=2009
+        let sql = 'SELECT DISTINCT Nombre FROM colegio.base_materia';
+        if (year) {
+            sql += ` WHERE year='${year}'`;
+        }
+
+        const materias = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });
+
+        res.json(materias); // Devuelve [{ Nombre: 'Materia1' }, { Nombre: 'Materia2' }, ...]
+    } catch (error) {
+        console.error('Error al obtener nombres distintos de materias:', error);
+        res.status(500).json({ message: 'Error interno del servidor' });
+    }
+};
 // Obtener todas las materias base
 exports.getAllBaseMaterias = async (req, res) => {
     try {

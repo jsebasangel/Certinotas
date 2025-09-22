@@ -74,7 +74,7 @@ for (let row of rows) {
       });
             console.log(row.Nombre_Materia+ 'verificar valor')
             let materiaBase = await BaseMaterias.findOrCreate({
-              where: { Nombre: row.Nombre_Materia },
+              where: { Nombre: row.Nombre_Materia, year:row.Year},
               defaults: {
                 Nombre: row.Nombre_Materia,
                 COD_Materia: row.Cod_Materia,
