@@ -1,0 +1,40 @@
+
+INSERT INTO colegio.Tipo_Documento (ID_Documento, Tipo_Documento, Numero, Lugar_Expedicion) 
+VALUES 
+(1, 1, '123456789', 'Bogotá'),
+(2, 2, '987654321', 'Medellín'),
+(3, 1, '456123789', 'Cali'),
+(4, 3, '741852963', 'Cartagena');
+
+
+INSERT INTO colegio.Curso (Nombre_Curso, Descripcion, Año)
+VALUES 
+('Matemáticas Avanzadas', 'Curso de matemáticas aplicadas a ciencias', 2023),
+('Química General', 'Introducción a la química y experimentación', 2023),
+('Literatura Universal', 'Estudio de obras literarias clásicas', 2024),
+('Historia Contemporánea', 'Historia desde la Revolución Industrial hasta hoy', 2024);
+
+
+INSERT INTO colegio.EXAlumno (ID_Documento, Nombre,Apellido, Fecha_Nacimiento, Direccion, Telefono, Correo_Electronico)
+VALUES 
+(1, 'Juan López', 'Lopez', '1985-07-23', 'Calle 123 #45-67, Bogotá', '3012345678', 'juan.lopez@example.com'),
+(2, 'Maria García', 'Trujillo', '1987-02-14', 'Avenida 67 #23-45, Medellín', '3023456789', 'maria.garcia@example.com'),
+(3, 'Pedro Rodríguez', 'Rodriguez', '1980-12-10', 'Carrera 12 #34-56, Cali', '3004567890', 'pedro.rodriguez@example.com'),
+(4, 'Lucía Martínez', Martinez,'1990-09-19', 'Calle 98 #12-34, Cartagena', '3105678901', 'lucia.martinez@example.com');
+
+
+INSERT INTO colegio.Materias (ID_Curso, ID_EXAlumno, Creditos, Nota, Fecha_Inscripcion, Nombre, Estado_Aprobacion)
+VALUES 
+(1, 1, 1, 3,1, 4.2, '2023-01-15', 'Álgebra Lineal', 'Aprobado'),
+(2, 2, 2, 4,1, 3.9, '2023-01-20', 'Química Orgánica', 'Aprobado'),
+(3, 3, 3, 3,1, 4.5, '2024-01-10', 'Literatura Moderna', 'Pendiente'),
+(4, 4, 4, 2,1, 4.0, '2024-01-25', 'Historia de América', 'Aprobado');
+
+
+INSERT INTO colegio.Certificado (Fecha_Emision, Detalles, ID_EXAlumno, ID_Curso)
+VALUES 
+('2023-02-15', 'Certificado de Notas de Matemáticas Avanzadas', 1, 1),
+('2023-02-20', 'Certificado de Notas de Química General', 2, 2),
+('2024-02-10', 'Certificado de Notas de Literatura Universal', 3, 3),
+('2024-02-25', 'Certificado de Notas de Historia Contemporánea', 4, 4);
+
