@@ -1,0 +1,11 @@
+﻿Tabla;Numero;Tip_Documento;ID_Documento;nombre_Exa;Apellido_Exa;Correo_Electronico;Telefono;Direccion;Fecha_Nacimiento;Nombre_Materia;Cod_Materia;Year;Creditos;Nombre_Curso;Descripcion;Nota
+;1019126544;CC;1001;Juan;Pérez;jperez@mail.com;3001112222;Calle 1 #10-20;10/05/1990;Tecnología e Informática;321;2012;3;11M;(11o) UNDÉCIMO;4.5
+;1019126544;CC;1001;Juan;Pérez;jperez@mail.com;3001112222;Calle 1 #10-20;10/05/1990;Ciencia Política;125;2012;2;11M;(11o) UNDÉCIMO;4.0
+;1019126544;CC;1001;Juan;Pérez;jperez@mail.com;3001112222;Calle 1 #10-20;10/05/1990;Ciencias Sociales;122;2012;3;11M;(11o) UNDÉCIMO;3.8
+;1019126545;CC;1002;María;Gómez;mgomez@mail.com;3002223333;Carrera 5 #15-30;08/22/1991;Tecnología e Informática;321;2012;2;11M;(11o) UNDÉCIMO;4.2
+;1019126546;TI;1003;Carlos;Rodríguez;crodriguez@mail.com;3003334444;Av 9 #20-50;01/15/1992;Tecnología e Informática;321;2012;2;11M;(11o) UNDÉCIMO;3.9
+;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;

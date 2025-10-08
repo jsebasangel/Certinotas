@@ -26,7 +26,7 @@ const cargaMasiva = async (req, res) => {
 for (let row of rows) {
   // ✅ Validar campos obligatorios
   if (
-    !row.ID_Documento || 
+    !row.Numero || 
     !row.nombre_Exa || 
     !row.Apellido_Exa || 
     !row.Nombre_Materia || 
@@ -38,7 +38,7 @@ for (let row of rows) {
             console.log("➡️ Tipo documento recibido:", row.Numero, row.Tip_Documento);
             let tipoDoc = await tipo_documento.findOrCreate({
               where: { Numero: row.Numero },
-              defaults: { Numero: row.Numero, Tipo_Documento: row.Tip_Documento },
+              defaults: { Numero: row.Numero, Tipo_Documento: row.Tip_Documento,Lugar_Expedicion:row.Lugar_Expedicion },
             });
 
             // 2. Crear exalumno si no existe
@@ -74,7 +74,7 @@ for (let row of rows) {
       });
             console.log(row.Nombre_Materia+ 'verificar valor')
             let materiaBase = await BaseMaterias.findOrCreate({
-              where: { Nombre: row.Nombre_Materia, year:row.Year},
+              where: {COD_Materia:row.Cod_Materia},
               defaults: {
                 Nombre: row.Nombre_Materia,
                 COD_Materia: row.Cod_Materia,

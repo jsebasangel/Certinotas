@@ -10,7 +10,7 @@ exports.getDistinctMaterias = async (req, res) => {
         const { year } = req.query; // Ej: /api/materias?year=2009
         let sql = 'SELECT DISTINCT Nombre FROM colegio.base_materia';
         if (year) {
-            sql += ` WHERE year='${year}'`;
+            sql += ` WHERE YEAR(year)='${year}'`;
         }
 
         const materias = await sequelize.query(sql, { type: sequelize.QueryTypes.SELECT });

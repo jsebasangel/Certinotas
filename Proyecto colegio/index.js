@@ -1,4 +1,5 @@
 const express = require('express');
+const swaggerDocs = require('./config/swagger'); // Importa el archivo de configuración
 const sequelize = require('./config/database');
 const tipoDocumentoRoutes = require('./routes/TipoDocumentoRoutes');
 const cursoRoutes = require('./routes/CursoRoutes');
@@ -27,6 +28,8 @@ app.use('/api/Usuario', UsuarioRoutes);
 app.use('/api/Registro', registroRoutes);
 app.use('/api/carga', cargaMasiva);
 
+// Swagger
+swaggerDocs(app);
 
 sequelize.sync({ force: false })
     .then(() => {

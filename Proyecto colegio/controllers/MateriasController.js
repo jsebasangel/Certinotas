@@ -29,6 +29,74 @@ exports.getConteoExAlumnosPorCurso = async (req, res) => {
         res.status(500).json({ message: "Error interno del servidor" });
     }
 };
+// Obtener nombres de materias por año
+exports.getMateriasPorAnio = async (req, res) => {
+  try {
+    const { year } = req.query; // Ej: /api/materias/nombres?year=2012
+
+    if (!year) {
+      return res.status(400).json({ message: "Debe proporcionar un año" });
+    }
+
+    const sql = `
+      SELECT 
+          c.year AS Año,
+          bm.Nombre AS Nombre_Materia
+      FROM 
+          colegio.materias m
+      JOIN 
+          colegio.curso c ON m.ID_Curso = c.ID_Curso
+      JOIN 
+          colegio.base_materia bm ON m.COD_Materias = bm.COD_Materia
+      WHERE 
+          c.year = :year
+      GROUP BY 
+          c.year, bm.Nombre
+      ORDER BY 
+          bm.Nombre ASC;
+    `;
+
+    const materias = await sequelize.query(sql, {
+      replacements: { year },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    res.json(materias);
+  } catch (error) {
+    console.error("Error al obtener materias por año:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+exports.getPromediosNotasPorAño = async (req, res) => {
+  try {
+    const sql = `
+      SELECT 
+          c.year AS Año,
+          AVG(m.Nota) AS Promedio_Nota,
+          MIN(m.Nota) AS Nota_Mínima,
+          MAX(m.Nota) AS Nota_Máxima,
+          COUNT(m.ID_Materias) AS Total_Materias
+      FROM 
+          colegio.materias m
+      JOIN 
+          colegio.curso c ON m.ID_Curso = c.ID_Curso
+      GROUP BY 
+          c.year
+      ORDER BY 
+          c.year ASC;
+    `;
+    const resultados = await sequelize.query(sql, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    res.json(resultados);
+  } catch (error) {
+    console.error("Error al obtener promedios de notas por año:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
 // Obtener todas las materias
 exports.getAllMaterias = async (req, res) => {
     try {

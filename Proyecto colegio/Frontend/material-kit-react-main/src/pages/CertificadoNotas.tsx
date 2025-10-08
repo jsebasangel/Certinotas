@@ -42,9 +42,9 @@ export default function CertificadoNotasPage() {
   useEffect(() => {
     const fetchMaterias = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/base-materias/NombreMaterias/Materia?year=${formValues.anio}`);
+        const res = await fetch(`http://localhost:3000/api/materias/materias/nombres?year=${formValues.anio}`);
         const data = await res.json();
-        setOpcionesMaterias(data.map((m: any) => m.Nombre));
+        setOpcionesMaterias(data.map((m: any) => m.Nombre_Materia));
       } catch (error) {
         console.error("Error cargando materias:", error);
       }
@@ -120,11 +120,11 @@ export default function CertificadoNotasPage() {
     const rowHeight = 8;
 
     // Cabecera
-    doc.setFont(undefined, "bold");
+    doc.setFont('', "bold");
     doc.rect(colX[0]-2, startY-6, 170, rowHeight, "S"); // rectángulo cabecera
     doc.text("Materia", colX[0], startY);
     doc.text("Nota", colX[1], startY);
-    doc.setFont(undefined, "normal");
+    doc.setFont('', "normal");
 
     // Filas de materias
     materias.forEach((m, i) => {
