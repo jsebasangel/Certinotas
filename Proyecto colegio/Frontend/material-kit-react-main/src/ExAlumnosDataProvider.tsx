@@ -2,13 +2,14 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 export function useExAlumnosData() {
   const [datos2, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/exalumnos')
+    axios.get(`${BACKEND_URL}/api/exalumnos`)
       .then((res) => {
         setData(res.data); // asegúrate que la estructura sea compatible
       })

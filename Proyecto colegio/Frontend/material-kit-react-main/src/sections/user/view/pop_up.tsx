@@ -6,6 +6,7 @@ import { Button } from '@mui/material';
 import { createPDF } from 'src/utils/GenPDF'; // Ajusta la ruta según la ubicación de tu archivo
 import { createPDF2 } from 'src/utils/GenPDF2';
 import { createPDF3 } from 'src/utils/GenPDF3';
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 const PopUp = ({ onClose, idExAlumno}: { onClose: () => void; idExAlumno: string }) => {
     type Curso = {
@@ -18,7 +19,7 @@ const PopUp = ({ onClose, idExAlumno}: { onClose: () => void; idExAlumno: string
     useEffect(() => {
     const grades = async (idExalumno: string) => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/materias/cursos-aprobados/${idExalumno}`);
+          const response = await axios.get(`${BACKEND_URL}/api/materias/cursos-aprobados/${idExalumno}`);
           const data = response.data;
           setCursos(data);
         } catch (error) {

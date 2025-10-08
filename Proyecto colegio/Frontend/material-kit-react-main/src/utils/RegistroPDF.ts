@@ -1,4 +1,5 @@
 import axios from "axios";
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 // Tipo de datos para el Registro
 export interface Registro {
@@ -15,7 +16,7 @@ export interface Registro {
  */
 export const crearRegistro = async (registro: Registro): Promise<void> => {
   try {
-    await axios.post("http://localhost:3000/api/Registro", registro);
+    await axios.post(`${BACKEND_URL}/api/Registro", registro`);
     console.log("Registro guardado correctamente");
   } catch (error) {
     console.error("Error al guardar el registro:", error);

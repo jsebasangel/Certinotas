@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Add, Delete } from "@mui/icons-material";
 import jsPDF from "jspdf";
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 export default function CertificadoNotasPage() {
   const [formValues, setFormValues] = useState({
@@ -42,7 +43,7 @@ export default function CertificadoNotasPage() {
   useEffect(() => {
     const fetchMaterias = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/materias/materias/nombres?year=${formValues.anio}`);
+        const res = await fetch(`${BACKEND_URL}/api/materias/materias/nombres?year=${formValues.anio}`);
         const data = await res.json();
         setOpcionesMaterias(data.map((m: any) => m.Nombre_Materia));
       } catch (error) {

@@ -17,7 +17,7 @@ export default defineConfig({
         lintCommand: 'eslint "./src/**/*.{js,jsx,ts,tsx}"',
         dev: { logLevel: ['error'] },
       },
-            overlay: false, // 👈 desactiva el recuadro de errores
+      overlay: false, // 👈 desactiva el recuadro de errores
     }),
   ],
   resolve: {
@@ -28,6 +28,22 @@ export default defineConfig({
       },
     ],
   },
-  server: { port: PORT, host: true },
-  preview: { port: PORT, host: true },
+  server: { 
+    port: PORT, 
+    host: true, 
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'encyclopedia-somerset-competitors-mountain.trycloudflare.com' // 👈 aquí agregas el dominio del túnel
+    ] 
+  },
+  preview: { 
+    port: PORT, 
+    host: true, 
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      'encyclopedia-somerset-competitors-mountain.trycloudflare.com'
+    ] 
+  },
 });

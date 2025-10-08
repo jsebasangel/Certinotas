@@ -3,6 +3,7 @@ import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { crearRegistro } from "./RegistroPDF";
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
 
@@ -57,11 +58,11 @@ const fetchMaterias = async (
 ): Promise<Materia[]> => {
   try {
     await axios.get(
-      `http://localhost:3000/api/materias/cursos-aprobados/${Exalumno.ID_EXAlumno}`
+      `${BACKEND_URL}/api/materias/cursos-aprobados/${Exalumno.ID_EXAlumno}`
     );
 
     const materiasResponse = await axios.get(
-      `http://localhost:3000/api/materias/certificado/${Exalumno.ID_EXAlumno}/${selectedGrade}`
+      `${BACKEND_URL}/api/materias/certificado/${Exalumno.ID_EXAlumno}/${selectedGrade}`
     );
 
     return materiasResponse.data;
@@ -77,7 +78,7 @@ const createPDF = async (
   selectedGrade: string,
 ): Promise<void> => {
   const response = await axios.get(
-    `http://localhost:3000/api/exalumnos/${Exalumno.ID_EXAlumno}`
+    `${BACKEND_URL}/api/exalumnos/${Exalumno.ID_EXAlumno}`
   );
   const data = response.data;
 

@@ -3,6 +3,8 @@ import { useState } from "react";
 import axios from "axios";
 import { Button, TextField, Box, Typography, Snackbar, Alert } from "@mui/material";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
+
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
@@ -33,7 +35,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const response = await axios.put("http://localhost:3000/api/Usuario/pass/reset-password", {
+      const response = await axios.put(`${BACKEND_URL}/api/Usuario/pass/reset-password`, {
         token,
         id,
         newPassword: password,

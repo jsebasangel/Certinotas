@@ -22,6 +22,7 @@ import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
 import { Iconify } from 'src/components/iconify';
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 // ----------------------------------------------------------------------
 
@@ -90,7 +91,7 @@ export function UserTableRow({ row, selected, onSelectRow,onUpdateRow }: UserTab
       };
 
       await axios.put(
-        `http://localhost:3000/api/exalumnos/${formValues.idEstudiante}`,
+        `${BACKEND_URL}/api/exalumnos/${formValues.idEstudiante}`,
         payload
       );
         onUpdateRow({

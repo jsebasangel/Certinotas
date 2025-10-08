@@ -1,5 +1,7 @@
 import axios from "axios";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
+
 let datos: any[] = [];
 export const _id = (index: number) => {
   if (datos.length > index && datos[index].Fecha_Nacimiento) {
@@ -10,7 +12,7 @@ export const _id = (index: number) => {
 };
   export const fetchExAlumnos = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/exalumnos");
+      const response = await axios.get(`${BACKEND_URL}/api/exalumnos`);
        datos = response.data;
     } catch (error) {
       console.error("Error fetching exalumnos data", error);

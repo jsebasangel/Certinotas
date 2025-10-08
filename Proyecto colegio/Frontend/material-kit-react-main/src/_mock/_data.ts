@@ -14,6 +14,7 @@ import {
   _productNames,
 } from './_mock';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 // ----------------------------------------------------------------------
  export const user = localStorage.getItem("usuario");
@@ -128,7 +129,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/cursos/cantidad-estudiantes-por-anio");
+        const res = await axios.get(`${BACKEND_URL}/cursos/cantidad-estudiantes-por-anio`);
         setEstudiantesPorAnio(res.data); 
       } catch (error) {
         console.error("Error al traer estudiantes por año:", error);
@@ -143,7 +144,7 @@ const generateId = (index: number) => `reg-${index + 1}`;
 // Método para consumir el servicio y formatear datos para el Timeline
 export const getTimelineRegistros = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/api/Registro/");
+    const response = await axios.get(`${BACKEND_URL}/api/Registro/`);
     let registros = response.data;
 
     // Ordenar por fecha (más recientes primero)

@@ -28,6 +28,9 @@ import type { MainSectionProps } from '../core/main-section';
 import type { HeaderSectionProps } from '../core/header-section';
 import type { LayoutSectionProps } from '../core/layout-section';
 
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+
 // ----------------------------------------------------------------------
 
 type LayoutBaseProps = Pick<LayoutSectionProps, 'sx' | 'children' | 'cssVars'>;
@@ -65,11 +68,14 @@ export function DashboardLayout({
         </Alert>
       ),
       leftArea: (
-        <>
-          {/** @slot Nav mobile */}
-          <NavMobile data={navData} open={open} onClose={onClose} workspaces={_workspaces} />
-        </>
-      ),
+  <>
+    <IconButton onClick={onOpen} sx={{ display: { xs: 'inline-flex', lg: 'none' } }}>
+      <MenuIcon />
+    </IconButton>
+
+    <NavMobile data={navData} open={open} onClose={onClose} workspaces={_workspaces} />
+  </>
+),
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           {/** @slot Searchbar */}

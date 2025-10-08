@@ -16,7 +16,12 @@ const PORT = process.env.PORT || 3000;
 const cors = require('cors'); // Importa el paquete cors
 
 
-app.use(cors());
+app.use(cors({
+  origin: '*',               // Permite cualquier dominio
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'], // Permite todos los métodos
+  allowedHeaders: ['Content-Type', 'Authorization'], // Permite cabeceras comunes
+  credentials: false         // No necesitas cookies o credenciales
+}));
 app.use(express.json());
 app.use('/api/tipo_documento', tipoDocumentoRoutes);
 app.use('/api/cursos', cursoRoutes);

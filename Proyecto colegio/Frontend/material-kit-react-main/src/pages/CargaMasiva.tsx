@@ -11,6 +11,8 @@ import {
   TableCell,
 } from "@mui/material";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
+
 const CargaDataPage = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,7 @@ const CargaDataPage = () => {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:3000/api/carga/carga-masiva", {
+      const response = await fetch(`${BACKEND_URL}/api/carga/carga-masiva`, {
         method: "POST",
         body: formData,
       });

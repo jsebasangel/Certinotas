@@ -15,7 +15,8 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
+console.log(BACKEND_URL);
 export function SignInView() {
   const router = useRouter();
 
@@ -36,7 +37,7 @@ export function SignInView() {
   // 👉 Login: ahora se hace la validación en el backend
   const handleSignIn = useCallback(async () => {
     try {
-      const response = await axios.post("http://localhost:3000/api/Usuario/login", {
+      const response = await axios.post(`${BACKEND_URL}/api/Usuario/login`, {
         correo: email,
         password: passwordInput,
       });
@@ -78,7 +79,7 @@ export function SignInView() {
     try {
       // 1️⃣ Consultar si el usuario existe
       const usuarioResponse = await axios.get(
-        `http://localhost:3000/api/Usuario/correo/${email}`
+        `${BACKEND_URL}/api/Usuario/correo/${email}`
       );
 
       if (!usuarioResponse.data?.idUsuarios) {
@@ -93,7 +94,7 @@ export function SignInView() {
       const id = usuarioResponse.data.idUsuarios;
 
       // 2️⃣ Enviar correo de recuperación
-      await axios.post(`http://localhost:3000/api/Usuario/${id}/forgot-password`);
+      await axios.post(`${BACKEND_URL}/api/Usuario/${id}/forgot-password`);
 
       setSnackbar({
         open: true,

@@ -12,6 +12,7 @@ import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
 import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
 
 import { getTimelineRegistros } from 'src/_mock/_data'; // <--- tu servicio
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 // ----------------------------------------------------------------------
 interface EstudiantesPorAnio {
@@ -35,7 +36,7 @@ export function OverviewAnalyticsView() {
     const fetchData = async () => {
       try {
         const res = await axios.get<EstudiantesPorAnio[]>(
-          "http://localhost:3000/api/cursos/cantidad/estudiantes"
+          `${BACKEND_URL}/api/cursos/cantidad/estudiantes`
         );
         setEstudiantesPorAnio(res.data);
       } catch (error) {
@@ -50,7 +51,7 @@ export function OverviewAnalyticsView() {
     const fetchData = async () => {
       try {
         const resc = await axios.get<CertificadosPorAnio[]>(
-          "http://localhost:3000/api/certificados/cantidad/certificados/"
+          `${BACKEND_URL}/api/certificados/cantidad/certificados/`
         );
         setCertificadosPoranio(resc.data);
       } catch (error) {
@@ -64,7 +65,7 @@ export function OverviewAnalyticsView() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/materias/promedio/promedio");
+        const res = await axios.get(`${BACKEND_URL}/api/materias/promedio/promedio`);
         const sortedData = res.data.sort((a, b) => a.Año - b.Año);
         setDataPromedios(sortedData);
       } catch (error) {

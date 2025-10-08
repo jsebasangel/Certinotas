@@ -3,6 +3,7 @@ import axios from "axios";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { crearRegistro } from "./RegistroPDF";
+const BACKEND_URL = import.meta.env.VITE_BACKEND;
 
 (pdfMake as any).vfs = (pdfFonts as any).vfs;
 
@@ -45,7 +46,7 @@ const createPDF3 = async (
   curso: any
 ): Promise<void> => {
   const response = await axios.get(
-    `http://localhost:3000/api/exalumnos/${Exalumno.ID_EXAlumno}`
+    `${BACKEND_URL}/api/exalumnos/${Exalumno.ID_EXAlumno}`
   );
   const data = response.data;
 
