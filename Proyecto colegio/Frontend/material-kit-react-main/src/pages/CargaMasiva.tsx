@@ -130,7 +130,7 @@ const CargaDataPage = () => {
                 <TableCell sx={{ color: "black" }}>ID</TableCell>
                 <TableCell sx={{ color: "black" }}>Nombre</TableCell>
                 <TableCell sx={{ color: "black" }}>Apellido</TableCell>
-                <TableCell sx={{ color: "black" }}>Documento</TableCell>
+                <TableCell sx={{ color: "black" }}>Telefono</TableCell>
                 <TableCell sx={{ color: "black" }}>Correo</TableCell>
                 <TableCell sx={{ color: "black" }}>Materia</TableCell>
               </TableRow>

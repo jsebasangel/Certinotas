@@ -4,6 +4,8 @@ const BaseMateria = require('../models/BaseMaterias');
 const EXAlumno = require('../models/EXAlumno');
 const { QueryTypes, Op, fn, col } = require('sequelize');
 const sequelize = require('../config/database');
+require('dotenv').config();
+
 
 /* =========================================================================
    CONTROLADORES ACTUALIZADOS PARA LA GESTIÓN DE MATERIAS
@@ -163,9 +165,9 @@ exports.getDistinctApprovedCourses = async (req, res) => {
 
     const cursosAprobados = await sequelize.query(
       `SELECT DISTINCT c.Nombre_Curso, c.year, c.Descripcion
-       FROM colegio.materias m
-       JOIN colegio.curso c ON m.ID_Curso = c.ID_Curso
-       WHERE m.ID_EXAlumno = :id_exalumno AND m.Nota >= 60`,
+       FROM ${process.env.DB_NAME}.materias m
+       JOIN ${process.env.DB_NAME}.curso c ON m.ID_Curso = c.ID_Curso
+       WHERE m.ID_EXAlumno = :id_exalumno AND m.Nota >= 3`,
       {
         replacements: { id_exalumno },
         type: QueryTypes.SELECT

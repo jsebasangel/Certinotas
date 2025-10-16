@@ -15,7 +15,7 @@ const EXAlumno = sequelize.define('EXAlumno', {
     allowNull: false,
     unique: true
   },
-  ID_Documento: {
+  Tipo_documento: {
     type: DataTypes.INTEGER,
     allowNull: true,
     references: {
@@ -62,7 +62,7 @@ const EXAlumno = sequelize.define('EXAlumno', {
 
 // 🔗 Relación con TipoDocumento
 EXAlumno.belongsTo(TipoDocumento, {
-  foreignKey: 'ID_Documento',
+  foreignKey: 'Tipo_documento',
   as: 'tipoDocumento',  // Alias para acceder desde consultas con include
   onUpdate: 'CASCADE',
   onDelete: 'SET NULL'

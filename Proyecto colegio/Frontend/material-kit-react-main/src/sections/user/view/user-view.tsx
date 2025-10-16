@@ -32,7 +32,7 @@ export function UserView() {
       setRows(
         datos2.map((exAlumno: any) => ({
           idEstudiante: exAlumno.ID_EXAlumno,
-          id: exAlumno.tipoDocumento.Numero,
+          id: exAlumno.Numero_Documento,
           nombre: exAlumno.Nombre,
           apellido: exAlumno.Apellido,
           nombreCompleto: exAlumno.Nombre + ' ' + exAlumno.Apellido,
