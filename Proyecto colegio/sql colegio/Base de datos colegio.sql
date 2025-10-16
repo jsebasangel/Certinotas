@@ -1,69 +1,80 @@
 
+CREATE DATABASE colegio;
 
-CREATE TABLE colegio.Tipo_Documento (
-    ID_Documento double PRIMARY KEY,
-    Tipo_Documento double  NOT NULL,
+
+
+CREATE TABLE colegio.Usuarios (
+    idUsuarios INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    reset_token_hash VARCHAR(150) DEFAULT NULL,
+    reset_expires DATETIME DEFAULT NULL
+);
+ 
+CREATE TABLE colegio.tipo_documento (
+    Tipo_documento INT AUTO_INCREMENT PRIMARY KEY,
+    Nombre_Tipo VARCHAR(10) NOT NULL
+    
+);
+Después creamos la tabla exalumnos
+CREATE TABLE colegio.exalumno (
+    ID_EXAlumno INT AUTO_INCREMENT PRIMARY KEY,
+    Numero_Documento VARCHAR(20) NOT NULL UNIQUE,
+    Tipo_documento INT DEFAULT NULL,
+    Nombre VARCHAR(100) NOT NULL,
+    Apellido VARCHAR(100) NOT NULL,
+    Fecha_Nacimiento DATE DEFAULT NULL,
+    Direccion VARCHAR(255) DEFAULT NULL,
+    Telefono VARCHAR(255) DEFAULT NULL,
+    Correo_Electronico VARCHAR(100) DEFAULT NULL,
     Numero VARCHAR(50) NOT NULL,
-    Lugar_Expedicion VARCHAR(100) NOT NULL
-);
+    Lugar_Expedicion VARCHAR(100) DEFAULT NULL,
 
--- Crear tabla Profesor
-CREATE TABLE colegio.Profesor (
-    ID_Profesor INT PRIMARY KEY AUTO_INCREMENT,
-    Nombre VARCHAR(100) NOT NULL,
-    Departamento VARCHAR(100),
-    Correo_Electronico VARCHAR(100)
+    CONSTRAINT fk_exalumno_tipo_documento FOREIGN KEY (Tipo_documento)
+        REFERENCES tipo_documento(Tipo_documento)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
 );
--- Crear tabla Notas
-CREATE TABLE colegio.Notas (
-    ID_Nota INT PRIMARY KEY AUTO_INCREMENT,
-    Periodo VARCHAR(50),
-    Nota1 DECIMAL(5, 2),
-    Nota2 DECIMAL(5, 2),
-    Nota3 DECIMAL(5, 2),
-    Nota4 DECIMAL(5, 2)
-);
--- Crear tabla Curso
-CREATE TABLE colegio.Curso (
-    ID_Curso INT PRIMARY KEY AUTO_INCREMENT,
+Después se crea la tabla curso
+CREATE TABLE colegio.curso (
+    ID_Curso INT AUTO_INCREMENT PRIMARY KEY,
     Nombre_Curso VARCHAR(100) NOT NULL,
-    Descripcion TEXT,
-    Año INT
-);
--- Crear tabla EXAlumno
-CREATE TABLE colegio.EXAlumno (
-    ID_EXAlumno double PRIMARY KEY AUTO_INCREMENT,
-    ID_Documento double,
-    Nombre VARCHAR(100) NOT NULL,
-    Fecha_Nacimiento DATE,
-    Direccion VARCHAR(255),
-    Telefono VARCHAR(255),
-    Correo_Electronico VARCHAR(100),
-FOREIGN KEY (ID_Documento) REFERENCES colegio.tipo_documento(ID_Documento)
-);
-CREATE TABLE colegio.Materias (
-    ID_Materias INT PRIMARY KEY AUTO_INCREMENT,
-    ID_Curso INT,
-    ID_EXAlumno double,
-    ID_Profesor INT,
-    Creditos INT,
-    Nota DECIMAL(5, 2),
-    Fecha_Inscripcion DATE,
-    Nombre VARCHAR(100),
-    Periodo VARCHAR(50),
-    Estado_Aprobacion VARCHAR(50),
-    FOREIGN KEY (ID_Curso) REFERENCES Curso(ID_Curso),
-    FOREIGN KEY (ID_EXAlumno) REFERENCES EXAlumno(ID_EXAlumno),
-    FOREIGN KEY (ID_Profesor) REFERENCES Profesor(ID_Profesor)
+    Descripcion TEXT DEFAULT NULL,
+    year INT DEFAULT NULL
 );
 
--- Crear tabla Certificado
-CREATE TABLE colegio.Certificado (
-    ID_Certificado INT PRIMARY KEY AUTO_INCREMENT,
-    Fecha_Emision DATE,
-    Detalles TEXT,
-    ID_EXAlumno double,
-    ID_Curso INT,
-    FOREIGN KEY (ID_EXAlumno) REFERENCES EXAlumno(ID_EXAlumno),
-    FOREIGN KEY (ID_Curso) REFERENCES Curso(ID_Curso)
+CREATE TABLE colegio.base_materia (
+    ID_Base_Materia INT AUTO_INCREMENT PRIMARY KEY,
+    Creditos DOUBLE DEFAULT NULL,
+    Nombre VARCHAR(50) DEFAULT NULL
+);
+
+CREATE TABLE colegio.materias (
+    ID_EXAlumno INT NOT NULL,
+    ID_Curso INT NOT NULL,
+    ID_Base_Materia INT NOT NULL,
+    Estado_Aprobacion VARCHAR(50) DEFAULT NULL,
+    Nota DOUBLE DEFAULT NULL,
+    PRIMARY KEY (ID_EXAlumno, ID_Curso, ID_Base_Materia),
+    CONSTRAINT fk_materias_exalumno FOREIGN KEY (ID_EXAlumno)
+        REFERENCES exalumno(ID_EXAlumno)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_materias_curso FOREIGN KEY (ID_Curso)
+        REFERENCES curso(ID_Curso)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_materias_base_materia FOREIGN KEY (ID_Base_Materia)
+        REFERENCES base_materia(ID_Base_Materia)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE colegio.Registro (
+    idRegistro INT AUTO_INCREMENT PRIMARY KEY,
+    nom_Usuario VARCHAR(255) NOT NULL,
+    Fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    Id_Alumno INT NOT NULL,
+    Descripcion VARCHAR(255) DEFAULT NULL
 );
