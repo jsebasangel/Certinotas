@@ -1,55 +1,39 @@
-// Importamos el modelo 'Materias', que representa la tabla 'materias' en la base de datos.
 const Materias = require('../models/Materias');
-
-// Importamos el modelo 'Curso' para poder hacer consultas relacionadas (JOIN) con cursos.
-const Curso = require('../models/Curso'); 
-
-// Importamos 'QueryTypes' para ejecutar consultas SQL crudas con sequelize.query
-const { QueryTypes } = require('sequelize');
-
-// Importamos operadores y funciones de Sequelize para consultas más avanzadas (condiciones, funciones agregadas, etc.)
-const { Op, fn, col } = require("sequelize");
-
-// Importamos la instancia de conexión a la base de datos.
-const sequelize = require('../config/database'); 
+const Curso = require('../models/Curso');
+const BaseMateria = require('../models/BaseMateria');
+const EXAlumno = require('../models/EXAlumno');
+const { QueryTypes, Op, fn, col } = require('sequelize');
+const sequelize = require('../config/database');
 
 /* =========================================================================
-   CONTROLADORES PARA LA GESTIÓN DE MATERIAS
-   =========================================================================
-   Este archivo contiene funciones asíncronas que se exportan como endpoints
-   del backend para manejar operaciones CRUD, consultas personalizadas y 
-   estadísticas relacionadas con las materias, exalumnos y cursos.
-========================================================================= */
+   CONTROLADORES ACTUALIZADOS PARA LA GESTIÓN DE MATERIAS
+   ========================================================================= */
 
 // ------------------------------------------------------------------------
 // 1. Obtener conteo de exalumnos por curso (solo los que aprobaron)
 // ------------------------------------------------------------------------
 exports.getConteoExAlumnosPorCurso = async (req, res) => {
-    try {
-        const { idCurso } = req.query; // Se obtiene el ID del curso desde la URL (ej: /materias/conteo?idCurso=7)
-
-        // Validación: si no se envía el ID del curso, retornamos error 400.
-        if (!idCurso) {
-            return res.status(400).json({ message: "Debe proporcionar un ID_Curso" });
-        }
-
-        // Consulta: contamos el número de exalumnos distintos que aprobaron (nota >= 60)
-        const resultado = await Materias.findAll({
-            attributes: [
-                [fn("COUNT", fn("DISTINCT", col("ID_EXAlumno"))), "totalExAlumnos"] // COUNT(DISTINCT ID_EXAlumno)
-            ],
-            where: {
-                ID_Curso: idCurso,
-                Nota: { [Op.gte]: 60 } // Solo aprobados
-            }
-        });
-
-        // Retornamos el resultado en formato JSON
-        res.json(resultado[0]);
-    } catch (error) {
-        console.error("Error al contar exalumnos por curso:", error);
-        res.status(500).json({ message: "Error interno del servidor" });
+  try {
+    const { idCurso } = req.query;
+    if (!idCurso) {
+      return res.status(400).json({ message: "Debe proporcionar un ID_Curso" });
     }
+
+    const resultado = await Materias.findAll({
+      attributes: [
+        [fn("COUNT", fn("DISTINCT", col("ID_EXAlumno"))), "totalExAlumnos"]
+      ],
+      where: {
+        ID_Curso: idCurso,
+        Nota: { [Op.gte]: 60 }
+      }
+    });
+
+    res.json(resultado[0]);
+  } catch (error) {
+    console.error("Error al contar exalumnos por curso:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 };
 
 // ------------------------------------------------------------------------
@@ -57,13 +41,11 @@ exports.getConteoExAlumnosPorCurso = async (req, res) => {
 // ------------------------------------------------------------------------
 exports.getMateriasPorAnio = async (req, res) => {
   try {
-    const { year } = req.query; // Se obtiene el año desde la URL (ej: /api/materias/nombres?year=2012)
-
+    const { year } = req.query;
     if (!year) {
       return res.status(400).json({ message: "Debe proporcionar un año" });
     }
 
-    // Consulta SQL cruda: selecciona las materias agrupadas por año
     const sql = `
       SELECT 
           c.year AS Año,
@@ -73,7 +55,7 @@ exports.getMateriasPorAnio = async (req, res) => {
       JOIN 
           colegio.curso c ON m.ID_Curso = c.ID_Curso
       JOIN 
-          colegio.base_materia bm ON m.COD_Materias = bm.COD_Materia
+          colegio.base_materia bm ON m.ID_Base_Materia = bm.ID_Base_Materia
       WHERE 
           c.year = :year
       GROUP BY 
@@ -82,10 +64,9 @@ exports.getMateriasPorAnio = async (req, res) => {
           bm.Nombre ASC;
     `;
 
-    // Ejecutamos la consulta y pasamos el parámetro 'year'
     const materias = await sequelize.query(sql, {
       replacements: { year },
-      type: sequelize.QueryTypes.SELECT
+      type: QueryTypes.SELECT
     });
 
     res.json(materias);
@@ -106,7 +87,7 @@ exports.getPromediosNotasPorAño = async (req, res) => {
           AVG(m.Nota) AS Promedio_Nota,
           MIN(m.Nota) AS Nota_Mínima,
           MAX(m.Nota) AS Nota_Máxima,
-          COUNT(m.ID_Materias) AS Total_Materias
+          COUNT(*) AS Total_Registros
       FROM 
           colegio.materias m
       JOIN 
@@ -118,7 +99,7 @@ exports.getPromediosNotasPorAño = async (req, res) => {
     `;
 
     const resultados = await sequelize.query(sql, {
-      type: sequelize.QueryTypes.SELECT
+      type: QueryTypes.SELECT
     });
 
     res.json(resultados);
@@ -129,203 +110,143 @@ exports.getPromediosNotasPorAño = async (req, res) => {
 };
 
 // ------------------------------------------------------------------------
-// 4. Obtener todas las materias con información del curso
+// 4. Obtener todas las materias con información relacionada
 // ------------------------------------------------------------------------
 exports.getAllMaterias = async (req, res) => {
-    try {
-        const materias = await Materias.findAll({
-            include: [{
-                model: Curso, // Relación con el modelo Curso
-                attributes: ['Nombre_Curso', 'Descripcion', 'year']
-            }]
-        });
-        res.json(materias);
-    } catch (error) {
-        console.error('Error al obtener materias:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
+  try {
+    const materias = await Materias.findAll({
+      include: [
+        { model: Curso, as: 'curso', attributes: ['Nombre_Curso', 'Descripcion', 'year'] },
+        { model: BaseMateria, as: 'baseMateria', attributes: ['Nombre', 'COD_Materia', 'Creditos'] },
+        { model: EXAlumno, as: 'exalumno', attributes: ['Nombre', 'Apellido', 'Numero_Documento'] }
+      ]
+    });
+    res.json(materias);
+  } catch (error) {
+    console.error('Error al obtener materias:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
 // ------------------------------------------------------------------------
-// 5. Obtener una materia específica por su ID
-// ------------------------------------------------------------------------
-exports.getMateriaById = async (req, res) => {
-    try {
-        const { id } = req.params; // ID de la materia en la URL
-        const materia = await Materias.findByPk(id, {
-            include: [{
-                model: Curso,
-                attributes: ['Nombre_Curso', 'Descripcion', 'year']
-            }]
-        });
-
-        if (!materia) {
-            return res.status(404).json({ message: 'Materia no encontrada' });
-        }
-        res.json(materia);
-    } catch (error) {
-        console.error('Error al obtener materia:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-};
-
-// ------------------------------------------------------------------------
-// 6. Obtener materias por ID de exalumno
+// 5. Obtener materias por ID_EXAlumno
 // ------------------------------------------------------------------------
 exports.getMateriasByExAlumnoId = async (req, res) => {
-    try {
-        const { id_exalumno } = req.params;
-        const materias = await Materias.findAll({
-            where: { id_exalumno },
-            include: [{
-                model: Curso,
-                attributes: ['Nombre_Curso', 'Descripcion', 'year']
-            }]
-        });
+  try {
+    const { id_exalumno } = req.params;
 
-        if (materias.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron materias para el exalumno' });
-        }
-        res.json(materias);
-    } catch (error) {
-        console.error('Error al obtener materias por ID_EXAlumno:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+    const materias = await Materias.findAll({
+      where: { ID_EXAlumno: id_exalumno },
+      include: [
+        { model: Curso, as: 'curso', attributes: ['Nombre_Curso', 'Descripcion', 'year'] },
+        { model: BaseMateria, as: 'baseMateria', attributes: ['Nombre', 'Creditos'] }
+      ]
+    });
+
+    if (materias.length === 0) {
+      return res.status(404).json({ message: 'No se encontraron materias para el exalumno' });
     }
+
+    res.json(materias);
+  } catch (error) {
+    console.error('Error al obtener materias por exalumno:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
 // ------------------------------------------------------------------------
-// 7. Obtener materias por ID_EXAlumno y nombre del curso
-// ------------------------------------------------------------------------
-exports.getMateriasByExAlumnoIdAndCursoName = async (req, res) => {
-    try {
-        const { id_exalumno, nombre_curso } = req.params;
-
-        if (!id_exalumno || !nombre_curso) {
-            return res.status(400).json({ message: 'ID_EXAlumno y Nombre_Curso son requeridos' });
-        }
-
-        const materias = await Materias.findAll({
-            where: { id_exalumno },
-            include: [{
-                model: Curso,
-                attributes: ['Nombre_Curso','year','Descripcion'],
-                where: { Nombre_Curso: nombre_curso }
-            }]
-        });
-
-        if (materias.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron materias para el exalumno y el curso especificado' });
-        }
-        res.json(materias);
-    } catch (error) {
-        console.error('Error al obtener materias por ID_EXAlumno y Nombre_Curso:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-};
-
-// ------------------------------------------------------------------------
-// 8. Obtener cursos aprobados distintos por ID_EXAlumno
+// 6. Obtener cursos distintos cursados por un exalumno
 // ------------------------------------------------------------------------
 exports.getDistinctApprovedCourses = async (req, res) => {
-    try {
-        const { id_exalumno } = req.params;
+  try {
+    const { id_exalumno } = req.params;
 
-        if (!id_exalumno) {
-            return res.status(400).json({ message: 'ID_EXAlumno es requerido' });
-        }
+    const cursosAprobados = await sequelize.query(
+      `SELECT DISTINCT c.Nombre_Curso, c.year, c.Descripcion
+       FROM colegio.materias m
+       JOIN colegio.curso c ON m.ID_Curso = c.ID_Curso
+       WHERE m.ID_EXAlumno = :id_exalumno AND m.Nota >= 60`,
+      {
+        replacements: { id_exalumno },
+        type: QueryTypes.SELECT
+      }
+    );
 
-        const cursosAprobados = await sequelize.query(
-            `SELECT DISTINCT (c.Nombre_Curso), c.year, c.Descripcion
-             FROM colegio.materias m
-             JOIN colegio.curso c ON m.ID_Curso = c.ID_Curso
-             WHERE m.ID_EXAlumno = :id_exalumno`,
-            {
-                replacements: { id_exalumno },
-                type: QueryTypes.SELECT
-            }
-        );
-
-        res.json(cursosAprobados);
-    } catch (error) {
-        console.error('Error al obtener nombres de cursos aprobados:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
+    res.json(cursosAprobados);
+  } catch (error) {
+    console.error('Error al obtener cursos aprobados:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
 // ------------------------------------------------------------------------
-// 9. Crear una nueva materia en la base de datos
+// 7. Crear una nueva materia (registro compuesto)
 // ------------------------------------------------------------------------
 exports.createMateria = async (req, res) => {
-    try {
-        const { ID_Curso, id_exalumno, Creditos, Fecha_Inscripcion, Nombre, Estado_Aprobacion, Nota } = req.body;
+  try {
+    const { ID_EXAlumno, ID_Curso, ID_Base_Materia, Estado_Aprobacion, Nota } = req.body;
 
-        // Crear el nuevo registro de materia
-        const nuevaMateria = await Materias.create({
-            ID_Curso,
-            id_exalumno,
-            Creditos,
-            Fecha_Inscripcion,
-            Nombre,
-            Estado_Aprobacion,
-            Nota
-        });
+    const nuevaMateria = await Materias.create({
+      ID_EXAlumno,
+      ID_Curso,
+      ID_Base_Materia,
+      Estado_Aprobacion,
+      Nota
+    });
 
-        res.status(201).json(nuevaMateria);
-    } catch (error) {
-        console.error('Error al crear materia:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
+    res.status(201).json(nuevaMateria);
+  } catch (error) {
+    console.error('Error al crear materia:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
 // ------------------------------------------------------------------------
-// 10. Actualizar una materia existente
+// 8. Actualizar una materia (usando clave compuesta)
 // ------------------------------------------------------------------------
 exports.updateMateria = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { ID_Curso, id_exalumno, Creditos, Fecha_Inscripcion, Nombre, Estado_Aprobacion, Nota } = req.body;
+  try {
+    const { ID_EXAlumno, ID_Curso, ID_Base_Materia } = req.params;
+    const { Estado_Aprobacion, Nota } = req.body;
 
-        // Buscar la materia por ID
-        const materia = await Materias.findByPk(id);
-        if (!materia) {
-            return res.status(404).json({ message: 'Materia no encontrada' });
-        }
+    const materia = await Materias.findOne({
+      where: { ID_EXAlumno, ID_Curso, ID_Base_Materia }
+    });
 
-        // Actualizar campos
-        materia.ID_Curso = ID_Curso;
-        materia.id_exalumno = id_exalumno;
-        materia.Creditos = Creditos;
-        materia.Fecha_Inscripcion = Fecha_Inscripcion;
-        materia.Nombre = Nombre;
-        materia.Estado_Aprobacion = Estado_Aprobacion;
-        materia.Nota = Nota;
-
-        await materia.save();
-        res.json(materia);
-    } catch (error) {
-        console.error('Error al actualizar materia:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+    if (!materia) {
+      return res.status(404).json({ message: 'Materia no encontrada' });
     }
+
+    materia.Estado_Aprobacion = Estado_Aprobacion;
+    materia.Nota = Nota;
+
+    await materia.save();
+    res.json(materia);
+  } catch (error) {
+    console.error('Error al actualizar materia:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
 // ------------------------------------------------------------------------
-// 11. Eliminar una materia por su ID
+// 9. Eliminar una materia (usando clave compuesta)
 // ------------------------------------------------------------------------
 exports.deleteMateria = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { ID_EXAlumno, ID_Curso, ID_Base_Materia } = req.params;
 
-        // Buscar materia
-        const materia = await Materias.findByPk(id);
-        if (!materia) {
-            return res.status(404).json({ message: 'Materia no encontrada' });
-        }
+    const materia = await Materias.findOne({
+      where: { ID_EXAlumno, ID_Curso, ID_Base_Materia }
+    });
 
-        // Eliminar el registro
-        await materia.destroy();
-        res.status(204).send(); // Respuesta sin contenido
-    } catch (error) {
-        console.error('Error al eliminar materia:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+    if (!materia) {
+      return res.status(404).json({ message: 'Materia no encontrada' });
     }
+
+    await materia.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error al eliminar materia:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };

@@ -1,125 +1,178 @@
 const EXAlumno = require('../models/EXAlumno');
-const TipoDocumento = require('../models/tipo_documento');
+const TipoDocumento = require('../models/TipoDocumento');
 const { Op } = require('sequelize');
 
-// Obtener todos los exalumnos con información del tipo de documento
+/* =========================================================================
+   CONTROLADORES ACTUALIZADOS PARA EXALUMNOS
+   ========================================================================= */
+
+// ------------------------------------------------------------------------
+// 1. Obtener todos los exalumnos con su tipo de documento
+// ------------------------------------------------------------------------
 exports.getAllEXAlumnos = async (req, res) => {
-    try {
-        const exalumnos = await EXAlumno.findAll({
-            include: [
-                {
-                    model: TipoDocumento,
-                    as: 'tipoDocumento'
-                }
-            ]
-        });
-        res.json(exalumnos);
-    } catch (error) {
-        console.error('Error al obtener exalumnos:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
+  try {
+    const exalumnos = await EXAlumno.findAll({
+      include: [
+        {
+          model: TipoDocumento,
+          as: 'tipoDocumento',
+          attributes: ['Tipo_documento', 'Nombre_Tipo']
+        }
+      ]
+    });
+    res.json(exalumnos);
+  } catch (error) {
+    console.error('Error al obtener exalumnos:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
-// Obtener un exalumno por ID con información del tipo de documento
+// ------------------------------------------------------------------------
+// 2. Obtener un exalumno por ID (con tipo de documento)
+// ------------------------------------------------------------------------
 exports.getEXAlumnoById = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const exalumno = await EXAlumno.findByPk(id, {
-            include: [
-                {
-                    model: TipoDocumento,
-                    as: 'tipoDocumento'
-                }
-            ]
-        });
-        if (!exalumno) {
-            return res.status(404).json({ message: 'EXAlumno no encontrado' });
+  try {
+    const { id } = req.params;
+    const exalumno = await EXAlumno.findByPk(id, {
+      include: [
+        {
+          model: TipoDocumento,
+          as: 'tipoDocumento',
+          attributes: ['Tipo_documento', 'Nombre_Tipo']
         }
-        res.json(exalumno);
-    } catch (error) {
-        console.error('Error al obtener exalumno:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+      ]
+    });
+
+    if (!exalumno) {
+      return res.status(404).json({ message: 'EXAlumno no encontrado' });
     }
+
+    res.json(exalumno);
+  } catch (error) {
+    console.error('Error al obtener exalumno:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
-// Crear un nuevo exalumno
+// ------------------------------------------------------------------------
+// 3. Crear un nuevo exalumno
+// ------------------------------------------------------------------------
 exports.createEXAlumno = async (req, res) => {
-    try {
-        const { ID_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo_Electronico } = req.body;
-        const nuevoEXAlumno = await EXAlumno.create({ ID_Documento, Nombre, Fecha_Nacimiento, Direccion, Telefono, Correo_Electronico });
-        res.status(201).json(nuevoEXAlumno);
-    } catch (error) {
-        console.error('Error al crear exalumno:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
+  try {
+    const {
+      Tipo_documento,  // 👈 campo actualizado
+      Numero_Documento,
+      Nombre,
+      Apellido,
+      Fecha_Nacimiento,
+      Direccion,
+      Telefono,
+      Correo_Electronico
+    } = req.body;
+
+    const nuevoEXAlumno = await EXAlumno.create({
+      Tipo_documento,
+      Numero_Documento,
+      Nombre,
+      Apellido,
+      Fecha_Nacimiento,
+      Direccion,
+      Telefono,
+      Correo_Electronico
+    });
+
+    res.status(201).json(nuevoEXAlumno);
+  } catch (error) {
+    console.error('Error al crear exalumno:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
-// Actualizar un exalumno existente
+// ------------------------------------------------------------------------
+// 4. Actualizar un exalumno existente
+// ------------------------------------------------------------------------
 exports.updateEXAlumno = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { ID_Documento, Nombre, Apellido ,Fecha_Nacimiento, Direccion, Telefono, Correo_Electronico } = req.body;
-        const exalumno = await EXAlumno.findByPk(id);
-        if (!exalumno) {
-            return res.status(404).json({ message: 'EXAlumno no encontrado' });
-        }
-        exalumno.ID_Documento = ID_Documento;
-        exalumno.Nombre = Nombre;
-        exalumno.Apellido=Apellido;
-        exalumno.Fecha_Nacimiento = Fecha_Nacimiento;
-        exalumno.Direccion = Direccion;
-        exalumno.Telefono = Telefono;
-        exalumno.Correo_Electronico = Correo_Electronico;
-        await exalumno.save();
-        res.json(exalumno);
-    } catch (error) {
-        console.error('Error al actualizar exalumno:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+  try {
+    const { id } = req.params;
+    const {
+      Tipo_documento,  // 👈 actualizado
+      Numero_Documento,
+      Nombre,
+      Apellido,
+      Fecha_Nacimiento,
+      Direccion,
+      Telefono,
+      Correo_Electronico
+    } = req.body;
+
+    const exalumno = await EXAlumno.findByPk(id);
+    if (!exalumno) {
+      return res.status(404).json({ message: 'EXAlumno no encontrado' });
     }
+
+    exalumno.Tipo_documento = Tipo_documento;
+    exalumno.Numero_Documento = Numero_Documento;
+    exalumno.Nombre = Nombre;
+    exalumno.Apellido = Apellido;
+    exalumno.Fecha_Nacimiento = Fecha_Nacimiento;
+    exalumno.Direccion = Direccion;
+    exalumno.Telefono = Telefono;
+    exalumno.Correo_Electronico = Correo_Electronico;
+
+    await exalumno.save();
+
+    res.json(exalumno);
+  } catch (error) {
+    console.error('Error al actualizar exalumno:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
 
-// Eliminar un exalumno por ID
+// ------------------------------------------------------------------------
+// 5. Eliminar un exalumno
+// ------------------------------------------------------------------------
 exports.deleteEXAlumno = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const exalumno = await EXAlumno.findByPk(id);
-        if (!exalumno) {
-            return res.status(404).json({ message: 'EXAlumno no encontrado' });
-        }
-        await exalumno.destroy();
-        res.status(204).send();
-    } catch (error) {
-        console.error('Error al eliminar exalumno:', error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+  try {
+    const { id } = req.params;
+    const exalumno = await EXAlumno.findByPk(id);
+
+    if (!exalumno) {
+      return res.status(404).json({ message: 'EXAlumno no encontrado' });
     }
+
+    await exalumno.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error al eliminar exalumno:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
 };
-//////
+
+// ------------------------------------------------------------------------
+// 6. Buscar exalumnos por apellido
+// ------------------------------------------------------------------------
 exports.searchExAlumnoByName = async (req, res) => {
-    try {
-        const {Apellido} = req.query; // Obtener el apellido desde los parámetros de la consulta
-  
-        // Buscar exalumnos cuyo apellido contenga la búsqueda (consulta parcial)
-        const exAlumnos = await EXAlumno.findAll({
-            include: [
-                {
-                    model: TipoDocumento,
-                    as: 'tipoDocumento'
-                }
-            ],
-            where:
-             {
-                Apellido: {
-                    [Op.like]: `%${Apellido}%`, // Buscar coincidencias parciales
-                    
-                },
-            },
-        });
-  
-        return res.status(200).json(exAlumnos);
-    } catch (error) {
-        console.error('Error al buscar exalumnos:', error);
-        return res.status(500).json({ error: 'Error al buscar exalumnos' });
-    }
-  };
-  
-  
+  try {
+    const { Apellido } = req.query;
+
+    const exAlumnos = await EXAlumno.findAll({
+      include: [
+        {
+          model: TipoDocumento,
+          as: 'tipoDocumento',
+          attributes: ['Tipo_documento', 'Nombre_Tipo']
+        }
+      ],
+      where: {
+        Apellido: {
+          [Op.like]: `%${Apellido || ''}%`
+        }
+      }
+    });
+
+    res.status(200).json(exAlumnos);
+  } catch (error) {
+    console.error('Error al buscar exalumnos:', error);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
