@@ -1,6 +1,6 @@
 const Materias = require('../models/Materias');
 const Curso = require('../models/Curso');
-const BaseMateria = require('../models/BaseMateria');
+const BaseMateria = require('../models/BaseMaterias');
 const EXAlumno = require('../models/EXAlumno');
 const { QueryTypes, Op, fn, col } = require('sequelize');
 const sequelize = require('../config/database');

@@ -105,7 +105,7 @@ router.get('/', MateriasController.getAllMaterias);
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/:id', MateriasController.getMateriaById);
+router.get('/:id', MateriasController.getMateriasByExAlumnoId);
 
 
 /**
@@ -175,7 +175,7 @@ router.get('/exalumno/:id_exalumno', MateriasController.getMateriasByExAlumnoId)
  *       500:
  *         description: Error interno del servidor
  */
-router.get('/certificado/:id_exalumno/:nombre_curso', MateriasController.getMateriasByExAlumnoIdAndCursoName);
+router.get('/certificado/:id_exalumno/:nombre_curso', MateriasController.getDistinctApprovedCourses);
 /**
  * @swagger
  * /materias/cursos-aprobados/{id_exalumno}:

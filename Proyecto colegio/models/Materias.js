@@ -5,7 +5,7 @@ const sequelize = require('../config/database');
 // Importamos los modelos relacionados
 const EXAlumno = require('./EXAlumno');
 const Curso = require('./Curso');
-const BaseMateria = require('./BaseMateria');
+const BaseMateria = require('./BaseMaterias');
 
 const Materias = sequelize.define('Materias', {
   ID_EXAlumno: {

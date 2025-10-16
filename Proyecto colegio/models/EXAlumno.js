@@ -1,7 +1,7 @@
 // models/EXAlumno.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const TipoDocumento = require('./TipoDocumento');
+const TipoDocumento = require('./tipo_documento');
 
 const EXAlumno = sequelize.define('EXAlumno', {
   ID_EXAlumno: {

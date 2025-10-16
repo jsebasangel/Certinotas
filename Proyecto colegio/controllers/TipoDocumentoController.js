@@ -1,4 +1,4 @@
-const TipoDocumento = require('../models/TipoDocumento');
+const TipoDocumento = require('../models/tipo_documento');
 
 /* =========================================================================
    CONTROLADORES ACTUALIZADOS PARA TIPO DE DOCUMENTO

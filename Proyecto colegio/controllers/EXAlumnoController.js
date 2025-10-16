@@ -1,5 +1,5 @@
 const EXAlumno = require('../models/EXAlumno');
-const TipoDocumento = require('../models/TipoDocumento');
+const TipoDocumento = require('../models/tipo_documento');
 const { Op } = require('sequelize');
 
 /* =========================================================================
